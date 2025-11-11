@@ -218,7 +218,6 @@ __marimo__/
 #command file
 command.txt
 publish_guide.md
-pyproject.toml
-MANIFEST.in
+
 scripts\update_version.py
 scripts/
