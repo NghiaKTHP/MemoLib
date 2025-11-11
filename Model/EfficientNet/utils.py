@@ -1,6 +1,7 @@
 from torchvision import transforms
 import yaml
 import torch.nn as nn
+import torch
 
 class EfficientNetWithFeatures(nn.Module):
     """
@@ -39,8 +40,6 @@ class EfficientNetWithFeatures(nn.Module):
 
 class Utils:
 
-
-
     def PrepareTrain_Augmentation(settingParams, TrainingParams):
             
         transform_list = [transforms.Resize(((int)(settingParams['ImageSize']), (int)(settingParams['ImageSize'])))]
@@ -72,13 +71,11 @@ class Utils:
             transform_list.append(transforms.RandomErasing(p=TrainingParams['Erasing']['Value'], scale=(0.02, 0.33), ratio=(0.3, 3.3)))  # 40% chance
 
         
-        if( TrainingParams["ColorJitterBrightness"]['Value'] > 0 or  
-           TrainingParams["ColorJitterContrast"]['Value'] > 0 or
-           TrainingParams["ColorJitterSaturation"]['Value'] > 0):
+        if( TrainingParams["HsvH"]['Value'] > 0 or  
+           TrainingParams["HsvS"]['Value'] > 0):
             
-            transform_list.append(transforms.ColorJitter(brightness=TrainingParams["ColorJitterBrightness"]['Value'],
-                                                         saturation=TrainingParams["ColorJitterSaturation"]['Value'],
-                                                         contrast=TrainingParams["ColorJitterContrast"]['Value']))
+            transform_list.append(transforms.ColorJitter(hue=TrainingParams["HsvH"]['Value'],
+                                                         saturation=TrainingParams["HsvS"]['Value']))
         
         
         # # HSV adjustments (torchvision doesn't support direct HSV, so use ColorJitter)
