@@ -101,36 +101,6 @@
       "step": 0.1,
       "description": "Probability of mosaic augmentation",
       "unit": ""
-    },
-    "hsv_h": {
-      "name": "HSV Hue",
-      "data_type": "float",
-      "default_value": 0.015,
-      "min_value": 0.0,
-      "max_value": 1.0,
-      "step": 0.005,
-      "description": "HSV hue augmentation strength",
-      "unit": ""
-    },
-    "hsv_s": {
-      "name": "HSV Saturation",
-      "data_type": "float",
-      "default_value": 0.7,
-      "min_value": 0.0,
-      "max_value": 1.0,
-      "step": 0.1,
-      "description": "HSV saturation augmentation strength",
-      "unit": ""
-    },
-    "hsv_v": {
-      "name": "HSV Value",
-      "data_type": "float",
-      "default_value": 0.4,
-      "min_value": 0.0,
-      "max_value": 1.0,
-      "step": 0.1,
-      "description": "HSV value (brightness) augmentation strength",
-      "unit": ""
     }
   }
 }
