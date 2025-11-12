@@ -294,11 +294,11 @@ class B0(IModel):
             # Load best model
             self.__saveModel(self.model, "last.pth")
 
-            self.Export(path.join("TrainResult", self.ProcessName, "Weights", "last.pth"), eExportType.openvino)
-            self.Export(path.join("TrainResult", self.ProcessName, "Weights", "best.pth"), eExportType.openvino)
+            self.Export(path.join("TrainResult", self.ProcessName, "Weights", "last.pth"), eExportType.openvino, settingParams['ImageSize'])
+            self.Export(path.join("TrainResult", self.ProcessName, "Weights", "best.pth"), eExportType.openvino, settingParams['ImageSize'])
             
-            self.Export(path.join("TrainResult", self.ProcessName, "Weights", "last.pth"), eExportType.onnx)
-            self.Export(path.join("TrainResult", self.ProcessName, "Weights", "best.pth"), eExportType.onnx)
+            self.Export(path.join("TrainResult", self.ProcessName, "Weights", "last.pth"), eExportType.onnx, settingParams['ImageSize'])
+            self.Export(path.join("TrainResult", self.ProcessName, "Weights", "best.pth"), eExportType.onnxm, settingParams['ImageSize'])
 
             self.model.eval()
             # Signal training completion
@@ -386,13 +386,13 @@ class B0(IModel):
             
         return ListResult
 
-    def Export(self, pathToPytorchModel: str, exportType : eExportType):         
+    def Export(self, pathToPytorchModel: str, exportType : eExportType, exportImageSize: int = 224):         
         
         tempModel = self.LoadWeight(pathToPytorchModel)
         pathExport = pathToPytorchModel.split('.')[0]
 
         inputShape = Utils.get_input_shape(tempModel)
-        dummy_input = torch.randn(1, inputShape[0], inputShape[1], inputShape[2]).to(self.Device)
+        dummy_input = torch.randn(1, inputShape[0], exportImageSize, exportImageSize).to(self.Device)
         if(tempModel != None):
             
             match exportType:
@@ -402,17 +402,30 @@ class B0(IModel):
                     pathExportHeatMap = pathExport + "HM.onnx"
                     
                     torch.onnx.export(
-                        tempModelHM,                     # Model to export
-                        dummy_input,               # Dummy input for tracing
-                        pathExportHeatMap,              # Output file name
-                        input_names=['input'],     # Name for input layer
-                        output_names=['output'],   # Name for output layer
-                        dynamic_axes={             # Support variable batch size
-                            'input': {0: 'batch_size'},
-                            'output': {0: 'batch_size'}
+                        tempModelHM,
+                        dummy_input,
+                        pathExportHeatMap,
+                        input_names=['input'],
+                        output_names=['output', 'features'],  
+                        
+                        # ========== CRITICAL FIX ==========
+                        dynamic_axes={
+                            'input': {
+                                0: 'batch_size',
+                                2: 'height',     
+                                3: 'width'       
+                            },
+                            'output': {0: 'batch_size'},
+                            'features': {
+                                0: 'batch_size',
+                                2: 'height',      
+                                3: 'width'       
+                            }
                         },
-                        opset_version=13           # ONNX opset version (adjust if needed)
-                        )
+                        # ==================================
+                        
+                        opset_version=13
+                    )
                     
                     
                     pathExport += ".onnx"
