@@ -407,23 +407,16 @@ class B0(IModel):
                         pathExportHeatMap,
                         input_names=['input'],
                         output_names=['output', 'features'],  
-                        
-                        # ========== CRITICAL FIX ==========
                         dynamic_axes={
                             'input': {
-                                0: 'batch_size',
-                                2: 'height',     
-                                3: 'width'       
+                              0: 'batch_size',
+     
                             },
                             'output': {0: 'batch_size'},
                             'features': {
                                 0: 'batch_size',
-                                2: 'height',      
-                                3: 'width'       
                             }
                         },
-                        # ==================================
-                        
                         opset_version=13
                     )
                     
