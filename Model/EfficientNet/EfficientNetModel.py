@@ -294,17 +294,26 @@ class B0(IModel):
             # Load best model
             self.__saveModel(self.model, "last.pth")
 
+            if hasattr(self.model, 'cpu'):  
+                self.model = self.model.cpu()
+
+            del self.model
+            self.model = None
+            torch.cuda.empty_cache()
+
             self.Export(path.join("TrainResult", self.ProcessName, "Weights", "last.pth"), eExportType.openvino, settingParams['ImageSize'])
             self.Export(path.join("TrainResult", self.ProcessName, "Weights", "best.pth"), eExportType.openvino, settingParams['ImageSize'])
             
             self.Export(path.join("TrainResult", self.ProcessName, "Weights", "last.pth"), eExportType.onnx, settingParams['ImageSize'])
             self.Export(path.join("TrainResult", self.ProcessName, "Weights", "best.pth"), eExportType.onnxm, settingParams['ImageSize'])
 
-            self.model.Unload() 
+            
             # Signal training completion
             
             self.IsTraining = False
             self.StopTrainingEvent.set()
+
+
 
         except Exception as ex:
             
@@ -410,7 +419,6 @@ class B0(IModel):
                         dynamic_axes={
                             'input': {
                               0: 'batch_size',
-     
                             },
                             'output': {0: 'batch_size'},
                             'features': {
@@ -461,6 +469,13 @@ class B0(IModel):
                         # ov.save_model(ov_model, pathExport)
         
         tempModel.Unload()  
+
+        if hasattr(tempModel, 'cpu'):  
+            tempModel = tempModel.cpu()
+
+        del tempModel
+        tempModel = None
+        torch.cuda.empty_cache()
 
 class B1(B0):
 
