@@ -672,7 +672,7 @@ class V2_L(B0):
 
     def LoadWeight(self, weightPath: str): 
         if(path.exists(weightPath)):
-            tempModel = models.efficientnet_v2_m(pretrained=False)  # Load without pretrained weights
+            tempModel = models.efficientnet_v2_l(pretrained=False)  # Load without pretrained weights
             tempModel.classifier = nn.Sequential(
                 nn.Dropout(p=0.3),
                 nn.Linear(tempModel.classifier[1].in_features, self.ClassesNumber)
