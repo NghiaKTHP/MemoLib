@@ -300,7 +300,7 @@ class B0(IModel):
             self.Export(path.join("TrainResult", self.ProcessName, "Weights", "last.pth"), eExportType.onnx, settingParams['ImageSize'])
             self.Export(path.join("TrainResult", self.ProcessName, "Weights", "best.pth"), eExportType.onnxm, settingParams['ImageSize'])
 
-            self.model.eval()
+            self.model.Unload() 
             # Signal training completion
             
             self.IsTraining = False
@@ -466,7 +466,8 @@ class B0(IModel):
                         # input_shape=dummy_input.shape()
                         # )
                         # ov.save_model(ov_model, pathExport)
-    
+        
+        tempModel.Unload()  
 
 class B1(B0):
 
