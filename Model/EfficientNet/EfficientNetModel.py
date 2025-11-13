@@ -305,7 +305,7 @@ class B0(IModel):
             self.Export(path.join("TrainResult", self.ProcessName, "Weights", "best.pth"), eExportType.openvino, settingParams['ImageSize'])
             
             self.Export(path.join("TrainResult", self.ProcessName, "Weights", "last.pth"), eExportType.onnx, settingParams['ImageSize'])
-            self.Export(path.join("TrainResult", self.ProcessName, "Weights", "best.pth"), eExportType.onnxm, settingParams['ImageSize'])
+            self.Export(path.join("TrainResult", self.ProcessName, "Weights", "best.pth"), eExportType.onnx, settingParams['ImageSize'])
 
             
             # Signal training completion
