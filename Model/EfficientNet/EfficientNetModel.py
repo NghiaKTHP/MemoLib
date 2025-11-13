@@ -320,7 +320,8 @@ class B0(IModel):
             print(f"Exception: {str(ex)}")
             if(self.callbacks != None):
                 self.callbacks("Error", f"Training error: {str(ex)}")
-            
+                print(f"Training error: {str(ex)}")
+                
             self.IsTraining = False
         
     def __saveModel(self, model, modelName):
@@ -421,13 +422,7 @@ class B0(IModel):
                         opset_version=13           # ONNX opset version (adjust if needed)
                         )
                     
-                    if hasattr(tempModel, 'cpu'):  
-                        tempModel = tempModel.cpu()
-
-                    del tempModel
-                    tempModel = None
-                    torch.cuda.empty_cache()
-
+                    
                     tempModelHM = EfficientNetWithFeatures(tempModel)
                     pathExportHeatMap = pathExport + "HM.onnx"
                     
@@ -454,6 +449,13 @@ class B0(IModel):
 
                     del tempModelHM
                     tempModelHM = None
+                    torch.cuda.empty_cache()
+
+                    if hasattr(tempModel, 'cpu'):  
+                        tempModel = tempModel.cpu()
+
+                    del tempModel
+                    tempModel = None
                     torch.cuda.empty_cache()
                     
                        
