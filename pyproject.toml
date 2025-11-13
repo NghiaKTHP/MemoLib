@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "MemoLib"
-version = "0.1.7.8"
+version = "0.1.7.9"
 description = "A Python library for machine learning model training and inference"
 readme = "README.md"
 license = {text = "MIT"}
