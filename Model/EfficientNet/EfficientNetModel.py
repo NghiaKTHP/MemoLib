@@ -407,6 +407,27 @@ class B0(IModel):
             match exportType:
                 case exportType.onnx:
                     
+                    pathExport += ".onnx"
+                    torch.onnx.export(
+                        tempModel,                     # Model to export
+                        dummy_input,               # Dummy input for tracing
+                        pathExport,              # Output file name
+                        input_names=['input'],     # Name for input layer
+                        output_names=['output'],   # Name for output layer
+                        dynamic_axes={             # Support variable batch size
+                            'input': {0: 'batch_size'},
+                            'output': {0: 'batch_size'}
+                        },
+                        opset_version=13           # ONNX opset version (adjust if needed)
+                        )
+                    
+                    if hasattr(tempModel, 'cpu'):  
+                        tempModel = tempModel.cpu()
+
+                    del tempModel
+                    tempModel = None
+                    torch.cuda.empty_cache()
+
                     tempModelHM = EfficientNetWithFeatures(tempModel)
                     pathExportHeatMap = pathExport + "HM.onnx"
                     
@@ -427,27 +448,15 @@ class B0(IModel):
                         },
                         opset_version=13
                     )
-                    
-                    
-                    pathExport += ".onnx"
-                    
-                    
-                    torch.onnx.export(
-                        tempModel,                     # Model to export
-                        dummy_input,               # Dummy input for tracing
-                        pathExport,              # Output file name
-                        input_names=['input'],     # Name for input layer
-                        output_names=['output'],   # Name for output layer
-                        dynamic_axes={             # Support variable batch size
-                            'input': {0: 'batch_size'},
-                            'output': {0: 'batch_size'}
-                        },
-                        opset_version=13           # ONNX opset version (adjust if needed)
-                        )
 
+                    if hasattr(tempModelHM, 'cpu'):  
+                        tempModelHM = tempModelHM.cpu()
 
-
-                                       
+                    del tempModelHM
+                    tempModelHM = None
+                    torch.cuda.empty_cache()
+                    
+                       
                 case eExportType.openvino:
                         if not OPENVINO_AVAILABLE:
                             print("Warning: OpenVINO is not installed. Install with: pip install MemoLib[openvino]")
@@ -461,20 +470,8 @@ class B0(IModel):
 
                         ov.save_model(ov_model, pathExport)
                         
-                        # ov_model = mo.convert_model(
-                        # tempModel, 
-                        # example_input=dummy_input,
-                        # input_shape=dummy_input.shape()
-                        # )
-                        # ov.save_model(ov_model, pathExport)
+
         
-
-        if hasattr(tempModel, 'cpu'):  
-            tempModel = tempModel.cpu()
-
-        del tempModel
-        tempModel = None
-        torch.cuda.empty_cache()
 
 class B1(B0):
 
