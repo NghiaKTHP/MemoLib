@@ -468,7 +468,6 @@ class B0(IModel):
                         # )
                         # ov.save_model(ov_model, pathExport)
         
-        tempModel.Unload()  
 
         if hasattr(tempModel, 'cpu'):  
             tempModel = tempModel.cpu()
